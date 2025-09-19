@@ -12,9 +12,10 @@ logger.setLevel(gunicorn_logger.level)
 
 app = Flask(__name__)
 
-ALLOWED_MEDIATYPES = {'cd', 'digital', 'vinyl', 'cassette'}
+ALLOWED_MEDIATYPES = {"cd", "digital", "vinyl", "cassette"}
 
-@app.route("/getalbum", methods=["GET"])
+
+@app.route("/music/getalbum", methods=["GET"])
 def return_album():
     artist = request.args.get("artist", default="", type=str)
     album = request.args.get("album", default="", type=str)
@@ -28,7 +29,7 @@ def return_album():
         return [], 404
 
 
-@app.route("/getfavorites", methods=["GET"])
+@app.route("/music/getfavorites", methods=["GET"])
 def return_favorites():
     artist = request.args.get("artist", default="", type=str)
     album = request.args.get("album", default="", type=str)
@@ -40,7 +41,7 @@ def return_favorites():
         return [], 404
 
 
-@app.route("/addalbum", methods=["POST"])
+@app.route("/music/addalbum", methods=["POST"])
 def save_album():
     album = request.json
     if album:
@@ -51,7 +52,11 @@ def save_album():
             return "Album without artist, album name or media type not allowed.", 400
         if mediatype not in ALLOWED_MEDIATYPES:
             return f"'{mediatype}' is not in {ALLOWED_MEDIATYPES}", 400
-        return str(save_to_db_wrapper({"artist": artist, "album": album_title, "mediatype": mediatype}))
+        return str(
+            save_to_db_wrapper(
+                {"artist": artist, "album": album_title, "mediatype": mediatype}
+            )
+        )
     else:
         return str(False)
 
